@@ -1,0 +1,1 @@
+import Link from 'next/link'; export default function NotFound(){return <main className="page"><div className="wrap" style={{textAlign:'center',paddingTop:100}}><h1 className="pageTitle">404</h1><p className="pageSub" style={{margin:'auto'}}>That Marketly page does not exist.</p><Link href="/" className="button" style={{marginTop:25}}>Back home</Link></div></main>}
