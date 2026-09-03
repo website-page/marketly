@@ -1,0 +1,2 @@
+import ProductCard from '@/components/ProductCard'; import {products} from '@/lib/data';
+export default function Products(){return <main className="page"><div className="wrap"><h1 className="pageTitle">Marketplace</h1><p className="pageSub">Premium templates, resources and digital tools for creators, developers, entrepreneurs and growing brands.</p><div className="grid" style={{marginTop:40}}>{products.map(p=><ProductCard key={p.id} p={p}/>)}</div></div></main>}
