@@ -1,0 +1,2 @@
+import {NextRequest,NextResponse} from 'next/server';
+export async function POST(req:NextRequest){const hash=req.headers.get('verif-hash');if(!process.env.FLW_WEBHOOK_HASH||hash!==process.env.FLW_WEBHOOK_HASH)return NextResponse.json({error:'Unauthorized'},{status:401});const body=await req.json();console.log('Flutterwave webhook received',body);return NextResponse.json({received:true});}
