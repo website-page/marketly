@@ -1,0 +1,3 @@
+import './globals.css'; import Navbar from '@/components/Navbar';
+export const metadata={title:'Marketly — Digital products, services & premium tools',description:'A global marketplace for digital products, creative services and premium resources.'};
+export default function RootLayout({children}:{children:React.ReactNode}){return <><Navbar/>{children}<footer className="footer"><div className="wrap row"><div><b>Marketly</b><div style={{marginTop:8}}>Digital products. Real services. One marketplace.</div></div><div>© 2026 Marketly</div></div></footer></>}
