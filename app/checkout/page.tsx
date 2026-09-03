@@ -1,2 +1,67 @@
-'use client'; import {useSearchParams} from 'next/navigation'; import {useState} from 'react'; import {products} from '@/lib/data';
-export default function Checkout(){const q=useSearchParams();const p=products.find(x=>x.id===q.get('product'))||products[0];const [email,setEmail]=useState('');const [msg,setMsg]=useState('');async function pay(){setMsg('Preparing secure payment…');const r=await fetch('/api/payments/initialize',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId:p.id,email})});const d=await r.json();if(d.link)location.href=d.link;else setMsg(d.error||'Payment setup is not configured yet.');}return <main className="page"><div className="formWrap"><span className="eyebrow">Secure checkout</span><h1 style={{fontSize:42,letterSpacing:-2}}>{p.title}</h1><div className="row" style={{margin:'22px 0'}}><span>Total</span><b style={{fontSize:28}}>${p.price}</b></div><label className="label">Email for receipt<input className="input" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com"/></label><button className="button" style={{width:'100%',marginTop:14}} onClick={pay} disabled={!email}>Continue to Flutterwave</button>{msg&&<div className="notice" style={{marginTop:16}}>{msg}</div>}<p className="muted" style={{fontSize:12,marginTop:16}}>Live checkout requires your Flutterwave public key and server-side secret key configured in Vercel.</p></div></main>}
+'use client';
+
+import { Suspense, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { products } from '@/lib/data';
+
+function CheckoutContent() {
+  const q = useSearchParams();
+  const p = products.find((x) => x.id === q.get('product')) || products[0];
+  const [email, setEmail] = useState('');
+  const [msg, setMsg] = useState('');
+
+  async function pay() {
+    setMsg('Preparing secure payment…');
+    const r = await fetch('/api/payments/initialize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: p.id, email }),
+    });
+    const d = await r.json();
+    if (d.link) location.href = d.link;
+    else setMsg(d.error || 'Payment setup is not configured yet.');
+  }
+
+  return (
+    <main className="page">
+      <div className="formWrap">
+        <span className="eyebrow">Secure checkout</span>
+        <h1 style={{ fontSize: 42, letterSpacing: -2 }}>{p.title}</h1>
+        <div className="row" style={{ margin: '22px 0' }}>
+          <span>Total</span>
+          <b style={{ fontSize: 28 }}>${p.price}</b>
+        </div>
+        <label className="label">
+          Email for receipt
+          <input
+            className="input"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+          />
+        </label>
+        <button
+          className="button"
+          style={{ width: '100%', marginTop: 14 }}
+          onClick={pay}
+          disabled={!email}
+        >
+          Continue to Flutterwave
+        </button>
+        {msg && <div className="notice" style={{ marginTop: 16 }}>{msg}</div>}
+        <p className="muted" style={{ fontSize: 12, marginTop: 16 }}>
+          Live checkout requires your Flutterwave public key and server-side secret key configured in Vercel.
+        </p>
+      </div>
+    </main>
+  );
+}
+
+export default function Checkout() {
+  return (
+    <Suspense fallback={<main className="page"><div className="formWrap"><div className="notice">Loading checkout…</div></div></main>}>
+      <CheckoutContent />
+    </Suspense>
+  );
+}
