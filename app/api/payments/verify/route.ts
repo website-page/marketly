@@ -1,2 +1,47 @@
-import {NextRequest,NextResponse} from 'next/server';
-export async function GET(req:NextRequest){const id=req.nextUrl.searchParams.get('transaction_id');if(!id)return NextResponse.redirect(new URL('/checkout?status=missing',req.url));const key=process.env.FLW_SECRET_KEY;if(!key)return NextResponse.redirect(new URL('/checkout?status=not-configured',req.url));const r=await fetch(`https://api.flutterwave.com/v3/transactions/${encodeURIComponent(id)}/verify`,{headers:{Authorization:`Bearer ${key}`}});const d=await r.json();const ok=r.ok&&d.status==='success'&&d.data?.status==='successful';return NextResponse.redirect(new URL(ok?'/dashboard?payment=success':'/checkout?status=failed',req.url))}
+import { NextRequest, NextResponse } from 'next/server';
+import { products } from '@/lib/data';
+
+export async function GET(req: NextRequest) {
+  const id = req.nextUrl.searchParams.get('transaction_id');
+  const txRef = req.nextUrl.searchParams.get('tx_ref');
+  const key = process.env.FLW_SECRET_KEY;
+  const fail = (reason: string) => NextResponse.redirect(new URL('/checkout?status=' + reason, req.url));
+
+  if (!id || !txRef || !key) return fail(!key ? 'not-configured' : 'missing');
+
+  // The product ID is between the fixed prefix and the final timestamp.
+  const match = txRef.match(/^marketly-(.+)-(\d+)$/);
+  if (!match) return fail('invalid-reference');
+  const productId = match[1];
+  const product = products.find((item) => item.id === productId && item.price > 0);
+  if (!product) return fail('invalid-product');
+
+  try {
+    const response = await fetch('https://api.flutterwave.com/v3/transactions/' + encodeURIComponent(id) + '/verify', {
+      headers: { Authorization: 'Bearer ' + key },
+      cache: 'no-store',
+    });
+    const result = await response.json();
+    const data = result?.data;
+    const paidAmount = Number(data?.charged_amount ?? data?.amount);
+    const expectedAmount = Number(product.price);
+    const valid = response.ok
+      && result?.status === 'success'
+      && data?.status === 'successful'
+      && data?.tx_ref === txRef
+      && data?.currency === product.currency
+      && Number.isFinite(paidAmount)
+      && paidAmount >= expectedAmount;
+
+    if (!valid) return fail('failed');
+
+    // This redirect is for the existing browser-storage demo only.
+    // Production access must be written to a trusted database for the authenticated user.
+    const target = new URL('/dashboard', req.url);
+    target.searchParams.set('payment', 'success');
+    target.searchParams.set('product', product.id);
+    return NextResponse.redirect(target);
+  } catch {
+    return fail('verification-error');
+  }
+}
