@@ -27,7 +27,7 @@ export default function Products() {
       <div className="wrap">
         <span className="eyebrow">Digital marketplace</span>
         <h1 className="pageTitle">Find something useful.</h1>
-        <p className="pageSub">Premium resources, practical Nigerian freebies and digital tools for creators, developers, entrepreneurs and growing brands.</p>
+        <p className="pageSub">Premium resources, practical free tools and digital products for creators, developers, entrepreneurs and growing brands worldwide.</p>
         <div className="notice" style={{marginTop:28,display:'flex',alignItems:'center',gap:12}}><Sparkles size={20}/><span><b>{free.length} free resources</b> are available to explore — no payment required.</span></div>
         <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) auto',gap:12,marginTop:28}}>
           <label className="label" style={{margin:0,position:'relative'}}><Search size={17} style={{position:'absolute',left:14,bottom:14}}/><input className="input" style={{paddingLeft:42}} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search products, tools, templates..." aria-label="Search products"/></label>
@@ -35,7 +35,7 @@ export default function Products() {
         </div>
         {showLandingSections && <>
           <h2 style={{marginTop:46}}>Free for the community</h2>
-          <p className="muted">Useful starter resources for students, job seekers, freelancers, creators and small businesses.</p>
+          <p className="muted">Useful starter resources for students, job seekers, freelancers, creators and small businesses worldwide.</p>
           <div className="grid" style={{marginTop:20}}>{free.map(p=><ProductCard key={p.id} p={p}/>)}</div>
           <h2 style={{marginTop:56}}>Premium marketplace</h2>
         </>}
