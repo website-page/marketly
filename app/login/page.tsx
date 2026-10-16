@@ -30,7 +30,7 @@ export default function Login() {
           <label className="label">Password<input name="password" className="input" type="password" required placeholder="Your password"/></label>
           <button className="button">Log in</button>
         </form>
-        <p className="muted" style={{fontSize:13}}>New here? <Link href="/signup">Create an account</Link></p>
+        <p className="muted" style={{fontSize:13}}>New here? <a href="/signup" onClick={(e) => { e.preventDefault(); const next = new URLSearchParams(window.location.search).get('next'); window.location.href = '/signup' + (next ? '?next=' + encodeURIComponent(next) : ''); }}>Create an account</a></p>
       </div>
     </main>
   );
