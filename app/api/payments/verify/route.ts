@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { products } from '@/lib/data';
+import { paidProductsCookieName, readPaidProductIds, signPaidProductIds } from '@/lib/paid-entitlements';
 
 export async function GET(req: NextRequest) {
   const id = req.nextUrl.searchParams.get('transaction_id');
@@ -35,12 +36,18 @@ export async function GET(req: NextRequest) {
 
     if (!valid) return fail('failed');
 
-    // This redirect is for the existing browser-storage demo only.
-    // Production access must be written to a trusted database for the authenticated user.
-    const target = new URL('/dashboard', req.url);
-    target.searchParams.set('payment', 'success');
-    target.searchParams.set('product', product.id);
-    return NextResponse.redirect(target);
+    const previous = readPaidProductIds(req.cookies.get(paidProductsCookieName)?.value, key);
+    const signedEntitlements = signPaidProductIds([...previous, product.id], key);
+    const target = new URL('/dashboard?payment=success', req.url);
+    const redirect = NextResponse.redirect(target);
+    redirect.cookies.set(paidProductsCookieName, signedEntitlements, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+    });
+    return redirect;
   } catch {
     return fail('verification-error');
   }
