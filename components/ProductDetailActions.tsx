@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Gift, ShoppingBag, CheckCircle2 } from 'lucide-react';
+import { Gift, ShoppingBag, CheckCircle2, Download } from 'lucide-react';
+import { downloadForexCoursePdf } from '@/components/ForexCourseDownload';
 
 export default function ProductDetailActions({ id, price }: { id: string; price: number }) {
   const isFree = price === 0;
@@ -31,6 +32,19 @@ export default function ProductDetailActions({ id, price }: { id: string; price:
   }
 
   if (isFree) {
+    if (id === 'free-forex-101') {
+      return (
+        <div style={{ display: 'grid', gap: 12 }}>
+          <button type="button" className="button" onClick={downloadForexCoursePdf}>
+            <Download size={17} /> Download Forex 101 PDF
+          </button>
+          <button type="button" className="button secondary" onClick={claimFreeProduct}>
+            {claimed ? <><CheckCircle2 size={17} /> Open my free library</> : <><Gift size={17} /> Add to my free library</>}
+          </button>
+          <p className="muted" style={{ fontSize: 12, margin: 0 }}>The PDF is generated in your browser. No payment is required.</p>
+        </div>
+      );
+    }
     return (
       <div style={{ display: 'grid', gap: 12 }}>
         <button type="button" className="button" onClick={claimFreeProduct}>
