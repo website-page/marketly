@@ -6,7 +6,7 @@ export default function ProductCard({ p }: { p: Product }) {
   const isFree = p.price === 0;
   return (
     <article className="card">
-      <div className="productImg" style={{ backgroundImage: `url(${p.image})` }} />
+      <div className="productImg productLogo" style={{ backgroundImage: `url(${p.image})` }} role="img" aria-label={`${p.title} logo`} />
       <div className="cardBody">
         <div className="row">
           <span className="pill">{p.category}</span>
