@@ -1,1 +1,31 @@
-{"name":"marketly","version":"1.0.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint"},"dependencies":{"next":"latest","react":"latest","react-dom":"latest","lucide-react":"latest","jspdf":"^3.0.2"},"devDependencies":{"@types/node":"latest","@types/react":"latest","@types/react-dom":"latest","typescript":"latest","tailwindcss":"latest","@tailwindcss/postcss":"latest"}}
+{
+  "name": "marketly",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:push": "prisma db push"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "lucide-react": "latest",
+    "jspdf": "^3.0.2",
+    "@prisma/client": "^6.19.0"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest",
+    "tailwindcss": "latest",
+    "@tailwindcss/postcss": "latest",
+    "prisma": "^6.19.0"
+  }
+}
