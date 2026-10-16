@@ -119,7 +119,7 @@ export default async function Product({ params }: { params: Promise<{ id: string
           <div style={{ fontSize: 36, fontWeight: 800, margin: '28px 0' }}>
             {p.price === 0 ? 'Free' : `$${p.price.toFixed(2)}`}
           </div>
-          <ProductDetailActions id={p.id} price={p.price} />
+          <ProductDetailActions product={p} />
           <div className="notice" style={{ marginTop: 20 }}>
             {p.id === 'free-forex-101'
               ? 'The Forex Trading 101 PDF can be generated and downloaded directly from this page. Adding it to your library is still stored in this browser demo.'
