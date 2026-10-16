@@ -11,6 +11,8 @@ export default function ProductDetailActions({ product }: { product: Product }) 
   const [user, setUser] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const [purchased, setPurchased] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState('');
 
   useEffect(() => {
     try {
@@ -31,7 +33,25 @@ export default function ProductDetailActions({ product }: { product: Product }) 
     window.location.href = '/login?next=' + encodeURIComponent(next);
   }
 
-  function download() {
+  async function startDownload() {
+    setDownloadError('');
+    setDownloading(true);
+    try {
+      // Load the PDF generator only when requested so the download action is
+      // isolated from initial page rendering and can surface any runtime error.
+      const { downloadProductPdf: generatePdf } = await import('@/components/ProductPdf');
+      generatePdf(product);
+    } catch (error) {
+      console.error('Marketly PDF download failed', error);
+      setDownloadError('The PDF could not be generated in this browser. Please refresh and try again, or try another browser.');
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  async function download() {
+    if (downloading) return;
+    setDownloadError('');
     if (!user) { loginFirst(); return; }
     if (isFree) {
       try {
@@ -41,28 +61,29 @@ export default function ProductDetailActions({ product }: { product: Product }) 
         localStorage.setItem('marketly_free_claims', JSON.stringify(claims));
         setClaimed(true);
       } catch {
-        alert('Please enable browser storage and try again.');
+        setDownloadError('Your browser storage is blocked. Enable site storage, refresh, and try again.');
         return;
       }
-      downloadProductPdf(product);
+      await startDownload();
       return;
     }
     if (!purchased) {
       window.location.href = '/checkout?product=' + encodeURIComponent(product.id);
       return;
     }
-    downloadProductPdf(product);
+    await startDownload();
   }
 
   return (
     <div style={{ display: 'grid', gap: 12 }}>
-      <button type="button" className="button" onClick={download}>
+      <button type="button" className="button" onClick={download} disabled={downloading}>
         {!user ? <LockKeyhole size={17} /> : isFree || purchased ? <Download size={17} /> : <ShoppingBag size={17} />}
-        {!user ? 'Log in / Sign up to download' : isFree ? claimed ? 'Download PDF again' : 'Get free PDF' : purchased ? 'Download purchased PDF' : 'Buy for $' + product.price + ' to unlock PDF'}
+        {downloading ? 'Preparing PDF…' : !user ? 'Log in / Sign up to download' : isFree ? claimed ? 'Download PDF again' : 'Get free PDF' : purchased ? 'Download purchased PDF' : 'Buy for $' + product.price + ' to unlock PDF'}
       </button>
-      {!user && <p className="muted" style={{ fontSize: 12, margin: 0 }}>An account is required before any download. New to Marketly? You can create a free account at login.</p>}
+      {downloadError && <p role="alert" style={{ color: '#c0392b', fontSize: 13, margin: 0 }}>{downloadError}</p>}
+      {!user && <p className="muted" style={{ fontSize: 12, margin: 0 }}>An account is required before any download. Sign in or create a free account to continue.</p>}
       {user && isFree && <p className="muted" style={{ fontSize: 12, margin: 0 }}>{claimed ? 'This free PDF is in your browser-based library.' : 'Free resource — no payment required.'}</p>}
-      {user && !isFree && !purchased && <p className="muted" style={{ fontSize: 12, margin: 0 }}>After successful server-side payment verification, the PDF unlocks in this browser. It is not yet linked to a persistent user account.</p>}
+      {user && !isFree && !purchased && <p className="muted" style={{ fontSize: 12, margin: 0 }}>The PDF unlocks after successful Flutterwave verification.</p>}
       {claimed && isFree && <Link className="button secondary" href="/dashboard"><Gift size={16}/> Open my library</Link>}
       {purchased && !isFree && <Link className="button secondary" href="/dashboard"><CheckCircle2 size={16}/> Open my library</Link>}
     </div>
