@@ -16,10 +16,14 @@ export default function ProductDetailActions({ product }: { product: Product }) 
     try {
       setUser(Boolean(localStorage.getItem('marketly_user')));
       const claims = JSON.parse(localStorage.getItem('marketly_free_claims') || '[]');
-      const purchases = JSON.parse(localStorage.getItem('marketly_purchases') || '[]');
       setClaimed(Array.isArray(claims) && claims.includes(product.id));
-      setPurchased(Array.isArray(purchases) && purchases.includes(product.id));
     } catch {}
+    let active = true;
+    fetch('/api/payments/entitlements', { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : { products: [] })
+      .then((data) => { if (active) setPurchased(Array.isArray(data.products) && data.products.includes(product.id)); })
+      .catch(() => { if (active) setPurchased(false); });
+    return () => { active = false; };
   }, [product.id]);
 
   function loginFirst() {
