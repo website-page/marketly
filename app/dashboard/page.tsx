@@ -18,19 +18,13 @@ export default function Dashboard() {
       const saved = localStorage.getItem('marketly_user');
       setUser(saved ? JSON.parse(saved) : null);
       setClaims(JSON.parse(localStorage.getItem('marketly_free_claims') || '[]'));
-      const existingPurchases = JSON.parse(localStorage.getItem('marketly_purchases') || '[]');
-      const params = new URLSearchParams(window.location.search);
-      const paidProduct = params.get('product');
-      if (params.get('payment') === 'success' && paidProduct && products.some(p => p.id === paidProduct && p.price > 0)) {
-        const list = Array.isArray(existingPurchases) ? existingPurchases : [];
-        if (!list.includes(paidProduct)) list.push(paidProduct);
-        localStorage.setItem('marketly_purchases', JSON.stringify(list));
-        setPurchases(list);
-        window.history.replaceState({}, '', '/dashboard');
-      } else {
-        setPurchases(Array.isArray(existingPurchases) ? existingPurchases : []);
-      }
     } catch {}
+    let active = true;
+    fetch('/api/payments/entitlements', { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : { products: [] })
+      .then((data) => { if (active) setPurchases(Array.isArray(data.products) ? data.products : []); })
+      .catch(() => { if (active) setPurchases([]); });
+    return () => { active = false; };
   }, []);
 
   function handleDownload(p: (typeof products)[number]) {
