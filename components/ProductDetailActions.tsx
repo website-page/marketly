@@ -2,58 +2,65 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Gift, ShoppingBag, CheckCircle2, Download } from 'lucide-react';
-import { downloadForexCoursePdf } from '@/components/ForexCourseDownload';
+import { Download, ShoppingBag, Gift, CheckCircle2, LockKeyhole } from 'lucide-react';
+import type { Product } from '@/lib/data';
+import { downloadProductPdf } from '@/components/ProductPdf';
 
-export default function ProductDetailActions({ id, price }: { id: string; price: number }) {
-  const isFree = price === 0;
+export default function ProductDetailActions({ product }: { product: Product }) {
+  const isFree = product.price === 0;
+  const [user, setUser] = useState(false);
   const [claimed, setClaimed] = useState(false);
+  const [purchased, setPurchased] = useState(false);
 
   useEffect(() => {
     try {
+      setUser(Boolean(localStorage.getItem('marketly_user')));
       const claims = JSON.parse(localStorage.getItem('marketly_free_claims') || '[]');
-      setClaimed(Array.isArray(claims) && claims.includes(id));
-    } catch {
-      setClaimed(false);
-    }
-  }, [id]);
+      const purchases = JSON.parse(localStorage.getItem('marketly_purchases') || '[]');
+      setClaimed(Array.isArray(claims) && claims.includes(product.id));
+      setPurchased(Array.isArray(purchases) && purchases.includes(product.id));
+    } catch {}
+  }, [product.id]);
 
-  function claimFreeProduct() {
-    try {
-      const stored = JSON.parse(localStorage.getItem('marketly_free_claims') || '[]');
-      const claims = Array.isArray(stored) ? stored : [];
-      if (!claims.includes(id)) claims.push(id);
-      localStorage.setItem('marketly_free_claims', JSON.stringify(claims));
-      setClaimed(true);
-      window.location.href = '/dashboard';
-    } catch {
-      alert('Your browser could not save this free resource. Please enable site storage and try again.');
-    }
+  function loginFirst() {
+    const next = '/products/' + product.id;
+    window.location.href = '/login?next=' + encodeURIComponent(next);
   }
 
-  if (isFree) {
-    if (id === 'free-forex-101') {
-      return (
-        <div style={{ display: 'grid', gap: 12 }}>
-          <button type="button" className="button" onClick={downloadForexCoursePdf}>
-            <Download size={17} /> Download Forex 101 PDF
-          </button>
-          <button type="button" className="button secondary" onClick={claimFreeProduct}>
-            {claimed ? <><CheckCircle2 size={17} /> Open my free library</> : <><Gift size={17} /> Add to my free library</>}
-          </button>
-          <p className="muted" style={{ fontSize: 12, margin: 0 }}>The PDF is generated in your browser. No payment is required.</p>
-        </div>
-      );
+  function download() {
+    if (!user) { loginFirst(); return; }
+    if (isFree) {
+      try {
+        const saved = JSON.parse(localStorage.getItem('marketly_free_claims') || '[]');
+        const claims = Array.isArray(saved) ? saved : [];
+        if (!claims.includes(product.id)) claims.push(product.id);
+        localStorage.setItem('marketly_free_claims', JSON.stringify(claims));
+        setClaimed(true);
+      } catch {
+        alert('Please enable browser storage and try again.');
+        return;
+      }
+      downloadProductPdf(product);
+      return;
     }
-    return (
-      <div style={{ display: 'grid', gap: 12 }}>
-        <button type="button" className="button" onClick={claimFreeProduct}>
-          {claimed ? <><CheckCircle2 size={17} /> Open my free library</> : <><Gift size={17} /> Get this free resource</>}
-        </button>
-        <p className="muted" style={{ fontSize: 12, margin: 0 }}>Free claim is saved in this browser for the current Marketly demo.</p>
-      </div>
-    );
+    if (!purchased) {
+      window.location.href = '/checkout?product=' + encodeURIComponent(product.id);
+      return;
+    }
+    downloadProductPdf(product);
   }
 
-  return <Link href={`/checkout?product=${id}`} className="button"><ShoppingBag size={17} /> Buy securely</Link>;
+  return (
+    <div style={{ display: 'grid', gap: 12 }}>
+      <button type="button" className="button" onClick={download}>
+        {!user ? <LockKeyhole size={17} /> : isFree || purchased ? <Download size={17} /> : <ShoppingBag size={17} />}
+        {!user ? 'Log in / Sign up to download' : isFree ? claimed ? 'Download PDF again' : 'Get free PDF' : purchased ? 'Download purchased PDF' : 'Buy for $' + product.price + ' to unlock PDF'}
+      </button>
+      {!user && <p className="muted" style={{ fontSize: 12, margin: 0 }}>An account is required before any download. New to Marketly? You can create a free account at login.</p>}
+      {user && isFree && <p className="muted" style={{ fontSize: 12, margin: 0 }}>{claimed ? 'This free PDF is in your browser-based library.' : 'Free resource — no payment required.'}</p>}
+      {user && !isFree && !purchased && <p className="muted" style={{ fontSize: 12, margin: 0 }}>After checkout, return to your dashboard to access the PDF. Payment access is still in demo mode until secure account and purchase storage are connected.</p>}
+      {claimed && isFree && <Link className="button secondary" href="/dashboard"><Gift size={16}/> Open my library</Link>}
+      {purchased && !isFree && <Link className="button secondary" href="/dashboard"><CheckCircle2 size={16}/> Open my library</Link>}
+    </div>
+  );
 }
