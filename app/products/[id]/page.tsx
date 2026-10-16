@@ -121,9 +121,11 @@ export default async function Product({ params }: { params: Promise<{ id: string
           </div>
           <ProductDetailActions id={p.id} price={p.price} />
           <div className="notice" style={{ marginTop: 20 }}>
-            {p.price === 0
-              ? 'Claiming a free resource adds it to the demo library in this browser. Download delivery will be enabled when secure file storage is connected.'
-              : 'Digital delivery should only be granted after successful server-side payment verification.'}
+            {p.id === 'free-forex-101'
+              ? 'The Forex Trading 101 PDF can be generated and downloaded directly from this page. Adding it to your library is still stored in this browser demo.'
+              : p.price === 0
+                ? 'Claiming a free resource adds it to the demo library in this browser. Its actual file still needs to be connected.'
+                : 'Digital delivery should only be granted after successful server-side payment verification.'}
           </div>
         </div>
       </div>
