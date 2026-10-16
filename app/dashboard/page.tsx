@@ -58,6 +58,6 @@ export default function Dashboard() {
     <section style={{marginTop:44}}><div className="row"><div><h2>My purchases</h2><p className="muted">Paid product PDFs available in this browser demo after checkout verification.</p></div><ShoppingBag size={22}/></div>
       {purchasedProducts.length ? <div className="grid" style={{marginTop:20}}>{purchasedProducts.map(p=><div className="card" key={p.id}><div className="productImg" style={{backgroundImage:'url(' + p.image + ')'}}/><div className="cardBody"><span className="pill">PURCHASED</span><h3>{p.title}</h3><p>{p.description}</p><button className="button small" onClick={()=>downloadProductPdf(p)}><Download size={15}/> Download PDF</button></div></div>)}</div> : <div className="notice" style={{marginTop:20}}>No paid products available yet. <Link href="/products">Browse premium products →</Link></div>}
     </section>
-    <div className="notice" style={{marginTop:28}}>Important: Marketly still uses demo browser storage for accounts and purchase history. Production-grade account security and server-side purchase entitlements must be connected before treating paid downloads as protected.</div>
+    <div className="notice" style={{marginTop:28}}>Important: Marketly sign-in still uses demo browser storage. Paid downloads use a signed server-side entitlement after payment verification, but purchases are not yet linked to a secure persistent user account.</div>
   </div></main>;
 }
