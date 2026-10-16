@@ -16,7 +16,8 @@ export default function Login() {
     };
     localStorage.setItem('marketly_user', JSON.stringify(user));
     window.dispatchEvent(new Event('marketly-auth'));
-    window.location.href = '/dashboard';
+    const next = new URLSearchParams(window.location.search).get('next');
+    window.location.href = next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
   }
 
   return (
