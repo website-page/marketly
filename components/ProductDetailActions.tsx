@@ -62,7 +62,7 @@ export default function ProductDetailActions({ product }: { product: Product }) 
       </button>
       {!user && <p className="muted" style={{ fontSize: 12, margin: 0 }}>An account is required before any download. New to Marketly? You can create a free account at login.</p>}
       {user && isFree && <p className="muted" style={{ fontSize: 12, margin: 0 }}>{claimed ? 'This free PDF is in your browser-based library.' : 'Free resource — no payment required.'}</p>}
-      {user && !isFree && !purchased && <p className="muted" style={{ fontSize: 12, margin: 0 }}>After checkout, return to your dashboard to access the PDF. Payment access is still in demo mode until secure account and purchase storage are connected.</p>}
+      {user && !isFree && !purchased && <p className="muted" style={{ fontSize: 12, margin: 0 }}>After successful server-side payment verification, the PDF unlocks in this browser. It is not yet linked to a persistent user account.</p>}
       {claimed && isFree && <Link className="button secondary" href="/dashboard"><Gift size={16}/> Open my library</Link>}
       {purchased && !isFree && <Link className="button secondary" href="/dashboard"><CheckCircle2 size={16}/> Open my library</Link>}
     </div>
