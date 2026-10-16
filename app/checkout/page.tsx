@@ -11,6 +11,10 @@ function CheckoutContent() {
   const [msg, setMsg] = useState('');
 
   useEffect(() => {
+    if (p.price === 0) {
+      window.location.replace('/products/' + p.id);
+      return;
+    }
     if (!localStorage.getItem('marketly_user')) {
       const next = '/checkout?product=' + encodeURIComponent(p.id);
       window.location.replace('/login?next=' + encodeURIComponent(next));
