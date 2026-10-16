@@ -121,11 +121,7 @@ export default async function Product({ params }: { params: Promise<{ id: string
           </div>
           <ProductDetailActions product={p} />
           <div className="notice" style={{ marginTop: 20 }}>
-            {p.id === 'free-forex-101'
-              ? 'The Forex Trading 101 PDF can be generated and downloaded directly from this page. Adding it to your library is still stored in this browser demo.'
-              : p.price === 0
-                ? 'Claiming a free resource adds it to the demo library in this browser. Its actual file still needs to be connected.'
-                : 'Digital delivery should only be granted after successful server-side payment verification.'}
+            A product-specific PDF is generated when you download. You must log in or create an account first. Free PDFs are available after claiming; paid PDFs unlock after Flutterwave payment verification. Marketly account sign-in is currently demo browser storage, so production-grade account security still needs to be connected.
           </div>
         </div>
       </div>
