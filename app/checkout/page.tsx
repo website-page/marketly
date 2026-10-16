@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { products } from '@/lib/data';
 
@@ -9,6 +9,13 @@ function CheckoutContent() {
   const p = products.find((x) => x.id === q.get('product')) || products[0];
   const [email, setEmail] = useState('');
   const [msg, setMsg] = useState('');
+
+  useEffect(() => {
+    if (!localStorage.getItem('marketly_user')) {
+      const next = '/checkout?product=' + encodeURIComponent(p.id);
+      window.location.replace('/login?next=' + encodeURIComponent(next));
+    }
+  }, [p.id]);
 
   async function pay() {
     setMsg('Preparing secure payment…');
