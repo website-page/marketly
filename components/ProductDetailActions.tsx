@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Download, ShoppingBag, Gift, CheckCircle2, LockKeyhole } from 'lucide-react';
 import type { Product } from '@/lib/data';
-import { downloadProductPdf } from '@/components/ProductPdf';
 
 export default function ProductDetailActions({ product }: { product: Product }) {
   const isFree = product.price === 0;
