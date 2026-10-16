@@ -27,21 +27,33 @@ export default function Dashboard() {
     return () => { active = false; };
   }, []);
 
-  function handleDownload(p: (typeof products)[number]) {
+  async function handleDownload(p: (typeof products)[number]) {
     if (!user) {
       window.location.href = '/login?next=' + encodeURIComponent('/dashboard');
       return;
     }
     if (p.price === 0 && !claims.includes(p.id)) {
-      alert('Please claim this free resource from its product page first.');
-      window.location.href = '/products/' + p.id;
-      return;
+      // Claim the free item here too, so the library does not dead-end users.
+      const nextClaims = [...new Set([...claims, p.id])];
+      try {
+        localStorage.setItem('marketly_free_claims', JSON.stringify(nextClaims));
+        setClaims(nextClaims);
+      } catch {
+        alert('Browser storage is blocked. Enable site storage, refresh, and try again.');
+        return;
+      }
     }
     if (p.price > 0 && !purchases.includes(p.id)) {
       window.location.href = '/checkout?product=' + encodeURIComponent(p.id);
       return;
     }
-    downloadProductPdf(p);
+    try {
+      const { downloadProductPdf: generatePdf } = await import('@/components/ProductPdf');
+      generatePdf(p);
+    } catch (error) {
+      console.error('Marketly PDF download failed', error);
+      alert('The PDF could not be generated in this browser. Refresh and try again, or use another browser.');
+    }
   }
 
   const claimedProducts = useMemo(() => products.filter(p => p.price === 0 && claims.includes(p.id)), [claims]);
