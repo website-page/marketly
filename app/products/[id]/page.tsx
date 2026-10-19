@@ -20,6 +20,14 @@ export default async function Product({ params }: { params: Promise<{ id: string
           <span className="pill">{p.category}</span>
           <h1 className="pageTitle productDetailTitle">{p.title}</h1>
           <p className="pageSub">{p.description}</p>
+          {p.price > 0 && p.tutorialUrl && (
+            <section className="notice" style={{ marginTop: 18 }}>
+              <h2 style={{ marginTop: 0 }}>Step-by-step video lesson</h2>
+              <p>Watch demonstrations related to this course or tool, then follow along with the included practice material.</p>
+              <a className="button secondary" href={p.tutorialUrl} target="_blank" rel="noopener noreferrer">Watch YouTube tutorials ↗</a>
+              <p className="muted" style={{ fontSize: 12, marginBottom: 0 }}>YouTube results may include third-party videos; review the creator and lesson before relying on it.</p>
+            </section>
+          )}
           {p.id === 'free-forex-101' && (
             <section className="notice" style={{ marginTop: 24, lineHeight: 1.75 }}>
               <h2>Forex Trading 101 — Beginner’s Course</h2>
