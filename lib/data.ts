@@ -10,11 +10,14 @@ const productMark=(kind:'gemini')=>{
 const chartLogo=(color:string)=>`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#101827"/><g fill="none" stroke="#'+color+'" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 96V32M38 82V48M58 90V26M78 66V38M98 78V22M14 104H114"/><path d="M18 72L38 58L58 68L78 44L98 50L112 28"/></g></svg>')}`;
 const embeddedLogo=(svg:string)=>`data:image/svg+xml,${encodeURIComponent(svg)}`;
 const brandLogo=(brand:'canva'|'flutterwave'|'mt5'|'capcut'|'generic-risk')=>{
+  const remote:Partial<Record<typeof brand,string>>={
+    canva:'https://static.canva.com/web/images/8439b51bb7a19f6e65ce1064bc37c197.svg',
+    flutterwave:'https://flutterwave.com/images/logo/logo-mark/full.svg',
+    mt5:'https://www.metatrader5.com/i/favicon/apple-touch-icon.png'
+  };
+  if (remote[brand]) return remote[brand]!;
   const logos={
-    canva:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 100"><image href="https://static.canva.com/web/images/8439b51bb7a19f6e65ce1064bc37c197.svg" width="240" height="100" preserveAspectRatio="xMidYMid meet"/></svg>',
-    flutterwave:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><image href="https://flutterwave.com/images/logo/logo-mark/full.svg" width="128" height="128" preserveAspectRatio="xMidYMid meet"/></svg>',
-    mt5:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><image href="https://www.metatrader5.com/i/favicon/apple-touch-icon.png" width="128" height="128" preserveAspectRatio="xMidYMid meet"/></svg>',
-    capcut:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#111827"/><path fill="#fff" fill-rule="evenodd" d="M104 35v-18l-22 12v-1c0-7-5-11-13-11H25c-8 0-13 4-13 11v19l31 17-31 17v19c0 7 5 11 13 11h44c8 0 13-4 13-11v-1l22 12V91L53 64l51-29ZM44 73l38 20H24l20-20Zm38-38L44 55 24 35h58Z"/></svg>',
+    capcut:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#111827"/><path fill="#fff" fill-rule="evenodd" d="M104 35V17L82 29v-1c0-7-5-11-13-11H25c-8 0-13 4-13 11v19l31 17-31 17v19c0 7 5 11 13 11h44c8 0 13-4 13-11v-1l22 12V91L53 64l51-29ZM44 73l38 20H24l20-20Zm38-38L44 55 24 35h58Z"/></svg>',
     'generic-risk':'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#101827"/><path d="M24 92V36h12v40l20-18 18 12 30-34 9 8-37 42-19-12-20 18z" fill="#59D6B0"/><path d="M76 36h30v30" fill="none" stroke="#59D6B0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
   return embeddedLogo(logos[brand]);
