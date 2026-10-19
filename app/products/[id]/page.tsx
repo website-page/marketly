@@ -116,12 +116,12 @@ export default async function Product({ params }: { params: Promise<{ id: string
               <p><strong>Suggested next step:</strong> answer these in your own words, then practise reading charts and recording hypothetical trades in a demo account before considering any live trading.</p>
             </section>
           )}
-          <div style={{ fontSize: 36, fontWeight: 800, margin: '28px 0' }}>
-            {p.price === 0 ? 'Free' : `$${p.price.toFixed(2)}`}
+          <div style={{ fontSize: 20, fontWeight: 800, margin: '28px 0' }}>
+            {p.price === 0 ? 'FREE RESOURCE' : p.plan === 'forex' ? 'PREMIUM 2 · FOREX' : 'PREMIUM 1'}
           </div>
           <ProductDetailActions product={p} />
           <div className="notice" style={{ marginTop: 20 }}>
-            A product-specific PDF is generated when you download. You must log in or create an account first. Free PDFs are available after claiming; paid PDFs unlock after Flutterwave payment verification. Marketly account sign-in is currently demo browser storage, so production-grade account security still needs to be connected.
+            A product-specific PDF is generated when you download. You must log in or create an account first. Free resources can be claimed at no cost. Premium membership billing and server-side membership enforcement still need to be connected before paid downloads can be securely unlocked.
           </div>
         </div>
       </div>
