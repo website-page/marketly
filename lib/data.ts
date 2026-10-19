@@ -10,13 +10,11 @@ const productMark=(kind:'gemini')=>{
 const chartLogo=(color:string)=>`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#101827"/><g fill="none" stroke="#'+color+'" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 96V32M38 82V48M58 90V26M78 66V38M98 78V22M14 104H114"/><path d="M18 72L38 58L58 68L78 44L98 50L112 28"/></g></svg>')}`;
 const embeddedLogo=(svg:string)=>`data:image/svg+xml,${encodeURIComponent(svg)}`;
 const brandLogo=(brand:'canva'|'flutterwave'|'mt5'|'capcut'|'generic-risk')=>{
-  const remote:Partial<Record<typeof brand,string>>={
-    canva:'https://static.canva.com/web/images/8439b51bb7a19f6e65ce1064bc37c197.svg',
-    flutterwave:'https://flutterwave.com/images/logo/logo-mark/full.svg',
-    mt5:'https://www.metatrader5.com/i/favicon/apple-touch-icon.png'
-  };
-  if (remote[brand]) return remote[brand]!;
+  // Inline SVGs avoid external-host failures and keep the product marks crisp at every size.
   const logos={
+    canva:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><defs><linearGradient id="c" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00c4cc"/><stop offset=".52" stop-color="#7d2ae8"/><stop offset="1" stop-color="#ff5c8a"/></linearGradient></defs><rect width="128" height="128" rx="28" fill="url(#c)"/><path d="M91 42c-5-8-15-13-28-13-23 0-40 17-40 39 0 20 14 32 33 32 13 0 25-6 32-17l-13-9c-5 7-10 10-17 10-10 0-17-7-17-18 0-13 9-23 21-23 6 0 11 2 15 7z" fill="#fff"/></svg>',
+    flutterwave:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="26" fill="#fff"/><g fill="#f5a623"><path d="M63 17c-17 0-29 14-29 30 0 10 6 17 15 21-2-14 5-26 17-31 5-2 10-3 16-2-3-10-10-18-19-18Z"/><path d="M65 111c17 0 29-14 29-30 0-10-6-17-15-21 2 14-5 26-17 31-5 2-10 3-16 2 3 10 10 18 19 18Z"/></g><g fill="#f5a623"><path d="M19 55c8-11 22-13 33-6-11 2-17 8-20 17-3 8-1 16 4 23-15-4-25-19-17-34Z"/><path d="M109 73c-8 11-22 13-33 6 11-2 17-8 20-17 3-8 1-16-4-23 15 4 25 19 17 34Z"/></g><path d="M47 60c8-7 26-7 34 0M47 68c8 7 26 7 34 0" fill="none" stroke="#f5a623" stroke-width="5" stroke-linecap="round"/></svg>',
+    mt5:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#fff"/><path d="M16 87 42 55l17 16 25-38 28 18v17L84 52 60 87 42 70 25 93z" fill="#00a6d6"/><path d="M16 99h96v10H16z" fill="#00a6d6"/><path d="M25 42h14v30H25zM48 28h14v34H48zM71 44h14v22H71zM94 22h14v36H94z" fill="#1685bf"/></svg>',
     capcut:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#111827"/><path fill="#fff" fill-rule="evenodd" d="M104 35V17L82 29v-1c0-7-5-11-13-11H25c-8 0-13 4-13 11v19l31 17-31 17v19c0 7 5 11 13 11h44c8 0 13-4 13-11v-1l22 12V91L53 64l51-29ZM44 73l38 20H24l20-20Zm38-38L44 55 24 35h58Z"/></svg>',
     'generic-risk':'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128"><rect width="128" height="128" rx="24" fill="#101827"/><path d="M24 92V36h12v40l20-18 18 12 30-34 9 8-37 42-19-12-20 18z" fill="#59D6B0"/><path d="M76 36h30v30" fill="none" stroke="#59D6B0" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
   };
