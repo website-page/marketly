@@ -7,7 +7,7 @@ export default function ProductCard({ p }: { p: Product }) {
   const premiumLabel = p.plan === 'forex' ? 'Premium 2 · Forex' : 'Premium 1';
   return (
     <article className="card">
-      <div className="productImg productLogo" style={{ backgroundImage: `url(${p.image})` }} role="img" aria-label={`${p.title} logo`} />
+      <div className="productImg productLogo"><img src={p.image} alt={`${p.title} logo`} /></div>
       <div className="cardBody">
         <div className="row">
           <span className="pill">{p.category}</span>
