@@ -42,6 +42,7 @@ export default function Navbar() {
       <nav>
         <Link href="/products">Marketplace</Link>
         <Link href="/services">Services</Link>
+        <Link href="/studio">Template Studio</Link>
         <Link href="/premium">Premium</Link>
       </nav>
       <div className="navActions">
