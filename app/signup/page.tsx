@@ -6,24 +6,44 @@ import { countryNames } from '@/lib/country-names';
 
 export default function Signup() {
   const [country, setCountry] = useState('Nigeria');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  function createAccount(e: React.FormEvent<HTMLFormElement>) {
+  async function createAccount(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError('');
     const form = new FormData(e.currentTarget);
     const normalizedCountry = countryNames.find((name) => name.toLowerCase() === country.trim().toLowerCase());
     if (!normalizedCountry) {
-      alert('Please select a country from the suggestions.');
+      setError('Please select a country from the suggestions.');
       return;
     }
-    const user = {
-      name: String(form.get('name') || ''),
-      email: String(form.get('email') || ''),
-      country: normalizedCountry,
-    };
-    localStorage.setItem('marketly_user', JSON.stringify(user));
-    window.dispatchEvent(new Event('marketly-auth'));
-    const next = new URLSearchParams(window.location.search).get('next');
-    window.location.href = next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
+    setLoading(true);
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: String(form.get('name') || ''),
+          email: String(form.get('email') || ''),
+          password: String(form.get('password') || ''),
+          country: normalizedCountry,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        setError(result.error || 'Unable to create your account. Please try again.');
+        return;
+      }
+      localStorage.setItem('marketly_user', JSON.stringify({ ...result.user, country: normalizedCountry }));
+      window.dispatchEvent(new Event('marketly-auth'));
+      const next = new URLSearchParams(window.location.search).get('next');
+      window.location.href = next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
+    } catch {
+      setError('Could not connect to Marketly. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -55,10 +75,10 @@ export default function Signup() {
             <input type="checkbox" required />
             <span>I agree to the <Link href="/terms">Terms &amp; Conditions</Link> and acknowledge the <Link href="/privacy-policy">Privacy Policy</Link>.</span>
           </label>
-          <button className="button" type="submit">Create account</button>
+          <button className="button" type="submit" disabled={loading}>{loading ? "Creating account…" : "Create account"}</button>
+          {error && <p role="alert" className="errorText">{error}</p>}
         </form>
         <p className="muted" style={{ fontSize: 13 }}>Already have an account? <Link href="/login">Log in</Link></p>
-        <p className="muted" style={{ fontSize: 12 }}>Marketly V1 currently uses demo browser storage; password-based authentication is not yet connected to a secure backend.</p>
       </div>
     </main>
   );
